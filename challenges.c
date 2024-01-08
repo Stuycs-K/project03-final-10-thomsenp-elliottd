@@ -24,6 +24,21 @@ int randyLit() {
     return *pointer;
 }
 
-int duel(char* opposingPlayer) {
-    
+int duel(struct player_values mine, struct player_values opponent) {
+    int sum = mine.troops + opponent.troops;
+    int random = randyLit()%sum + 1;
+    if (random > mine.troops) {
+        opponent.troops += 1;
+        mine.troops -= 1;
+        int troops_lost = randyLit()%(mine.troops/2) + (mine.troops/10);
+    }
+    else {
+        opponent.troops -= 1;
+        mine.troops += 1;
+        int troops_lost = randyLit()%(opponent.troops/2) + (opponent.troops/10);
+    }
+}
+
+int wager(struct player_values player, int amount) {
+
 }
