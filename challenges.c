@@ -24,4 +24,6 @@ int randyLit() {
     return *pointer;
 }
 
-
+int duel(char* opposingPlayer) {
+    
+}
