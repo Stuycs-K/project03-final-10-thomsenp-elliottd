@@ -51,4 +51,29 @@ int wager(struct player_values mine, struct player_values opponent, int amount) 
     }
 }
 
-int 
+
+
+int individualLevel() {
+    int random = randyLit()%100 +1;
+    if (random <= 50) {
+        commonEvent();
+    }
+    else if (random <= 80) {
+        uncommonEvent();
+    }
+    else if (random <= 100) {
+        rareEvent();
+    }
+}
+
+int tribeLevel() {
+
+}
+
+int serverLevel() {
+
+}
+
+int getEvent() {
+
+}
