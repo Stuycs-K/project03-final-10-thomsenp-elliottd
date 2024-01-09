@@ -39,6 +39,16 @@ int duel(struct player_values mine, struct player_values opponent) {
     }
 }
 
-int wager(struct player_values player, int amount) {
-
+int wager(struct player_values mine, struct player_values opponent, int amount) {
+    int random = randyLit()%2 + 1;
+    if (random > mine.troops) {
+        opponent.gold += amount;
+        mine.gold -= amount;
+    }
+    else {
+        opponent.gold -= amount;
+        mine.gold += amount;
+    }
 }
+
+int 
