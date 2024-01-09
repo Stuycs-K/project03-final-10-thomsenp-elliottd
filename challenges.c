@@ -51,12 +51,28 @@ int wager(struct player_values mine, struct player_values opponent, int amount) 
     }
 }
 
+int commonEvent(int random){
+    if (random <= 10) {
+        
+    }
+    else if (random <= 20) {
 
+    }
+    else if (random <= 30) {
+
+    }
+    else if (random<= 40) {
+
+    }
+    else {
+
+    }
+}
 
 int individualLevel() {
     int random = randyLit()%100 +1;
     if (random <= 50) {
-        commonEvent();
+        commonEvent(random);
     }
     else if (random <= 80) {
         uncommonEvent();
