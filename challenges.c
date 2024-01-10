@@ -52,19 +52,19 @@ int wager(struct player_values mine, struct player_values opponent, int amount) 
 }
 
 int commonEvent(int random, struct player_values input){
-    if (random <= 10) {
+    if (random <= 13) {
         printf("Your kingdom faces harsh weather, you lose 20 gold.\n");
         input.gold -= 20;
     }
-    else if (random <= 20) {
+    else if (random <= 2*13) {
         printf("Bandits bombard your kingdom, you lose 10 troops.\n");
         input.troops -= 10;
     }
-    else if (random <= 30) {
+    else if (random <= 3*13) {
         printf("You receive refugees, your population grows by 20 people.\n");
         input.population += 20;
     }
-    else if (random<= 40) {
+    else if (random<= 4*13) {
         printf("Some residents hate your recent actions, your population decreases by 10 people.\n");
         input.population -= 10;
     }
@@ -74,25 +74,27 @@ int commonEvent(int random, struct player_values input){
 }
 
 int uncommonEvent(int random, struct player_values input){
-    if (random <= 60) {
+    if (random <= 65+8) {
         printf("Your city floods and much is lost, you lose 100 gold and 50 people.\n");
         input.population -= 50;
         input.gold -= 100;
     }
-    else if (random <= 70) {
-
+    else if (random <= 65+8*2) {
+        printf("A great hero visits your kingdom, many flock to visit them. You gain 300 gold.\n");
+        input.gold += 300;
     }
     else {
-
+        printf("A cult forms in your kingdom, many kill themselves in hopes of meeting the great flying spaghetti monster. You lose 120 people.");
+        input.population -= 120;
     }
 }
 
 int individualLevel(struct player_values input) {
     int random = randyLit()%100 +1;
-    if (random <= 50) {
+    if (random <= 65) {
         commonEvent(random, input);
     }
-    else if (random <= 80) {
+    else if (random <= 89) {
         uncommonEvent(random, input);
     }
     else if (random <= 99) {
