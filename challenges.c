@@ -89,6 +89,19 @@ int uncommonEvent(int random, struct player_values input){
     }
 }
 
+int rareEvent(int random, struct player_values input) {
+    if (random <= 94) {
+        printf("A dragon attacks your kingdom! You lose 2 cities, 100 people, 320 gold, and 330 troops.\n");
+        input.cities -= 2;
+        input.population -= 100;
+        input.gold -= 320;
+        input.troops -= 330;
+    }
+    else {
+
+    }
+}
+
 int individualLevel(struct player_values input) {
     int random = randyLit()%100 +1;
     if (random <= 65) {
