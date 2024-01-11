@@ -77,7 +77,7 @@ int commonEvent(int random, struct player_values input){
     }
     else if (random <= 3*13) {
         printf("You receive refugees, your population grows by 20 people.\n");
-        input.population += 20;
+        input.population += (int) (20*input.populationMulti);
     }
     else if (random<= 4*13) {
         printf("Some residents hate your recent actions, your population decreases by 10 people.\n");
