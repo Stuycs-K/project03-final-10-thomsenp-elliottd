@@ -91,14 +91,17 @@ int uncommonEvent(int random, struct player_values input){
 
 int rareEvent(int random, struct player_values input) {
     if (random <= 94) {
-        printf("A dragon attacks your kingdom! You lose 2 cities, 100 people, 320 gold, and 330 troops.\n");
+        printf("A dragon attacks your kingdom! You lose 2 cities, 400 people, 320 gold, and 330 troops.\n");
         input.cities -= 2;
         input.population -= 100;
         input.gold -= 320;
         input.troops -= 330;
     }
     else {
-
+        printf("Mr.K has smiled upon you. You gain 400 gold and two cities.\n");
+        input.cities += 2;
+        input.gold += 400;
+        input.population += 400;
     }
 }
 
