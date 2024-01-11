@@ -51,6 +51,21 @@ int wager(struct player_values mine, struct player_values opponent, int amount) 
     }
 }
 
+int tribeEntry(int tribe, struct player_values input) {
+    input.troopMulti = 1.0;
+    input.goldMulti = 1.0;
+    input.populationMulti = 1.0;
+    if (tribe == 0) {
+        input.troopMulti = 1.1;
+    }
+    else if (tribe == 1) {
+        input.goldMulti = 1.1;
+    }
+    else if (tribe == 2){
+        input.populationMulti = 1.1;
+    }
+}
+
 int commonEvent(int random, struct player_values input){
     if (random <= 13) {
         printf("Your kingdom faces harsh weather, you lose 20 gold.\n");
@@ -105,12 +120,9 @@ int rareEvent(int random, struct player_values input) {
     }
 }
 
-int individualLevel(struct player_values input) {
+int tribeLevel(struct player_values input) {
     int random = randyLit()%100 +1;
-    if (random <= 65) {
-        commonEvent(random, input);
-    }
-    else if (random <= 89) {
+    if (random <= 65) {read
         uncommonEvent(random, input);
     }
     else if (random <= 99) {
@@ -125,10 +137,6 @@ int individualLevel(struct player_values input) {
     }
 }
 
-int tribeLevel() {
-
-}
-
 int serverLevel() {
 
 }
@@ -136,3 +144,11 @@ int serverLevel() {
 int getEvent() {
 
 }
+
+int isAlive(struct player_values input) {
+    if (input.gold == 0) {
+        return 1;
+    }
+    return 0;
+}
+
