@@ -138,15 +138,49 @@ int tribeLevel(struct player_values input) {
 }
 
 int serverLevel() {
-
+    int random = randyLit()%3 + 1;
+    int final;
+    if (random <= 1) {
+        printf("The goblin empire is aiming to conquer everything. Your nation is in its warpath.\n");
+        printf("What will you do?\n");
+        printf("Option 1: The goblins are incompetent, do nothing.\n");
+        printf("Option 2: Shelter in and prepare all of your cities for a siege.\n");
+        printf("Option 3: WAAAAAAR!!!!!!! (Take the battle to them with a preemptive strike).\n");
+        printf("Option 4: Attempt diplomacy with the goblins (Do you have a good translator?).\n");
+        printf("What path will your kingdom take, please select an option: ");
+        scanf("%d", &final);
+        return final;
+    }
+    else if (random <= 2) {
+        printf("A plague is sweeping the continent. Your people live in terrible fear of the Miasma of Doom\n");
+        printf("What will you do?\n");
+        printf("Option 1: Miasma is nothing, why should I take action?\n");
+        printf("Option 2: Spend half of your nation's gold to gather the greatest physicians in the land.\n");
+        printf("Option 3: Execute all of the sick and burn their bodies.\n");
+        printf("Option 4: Turn to the church and believe in the power of god(s).\n");
+        printf("What path will your kingdom take, please select an option: ");
+        scanf("%d", &final);
+        return final;
+    }
+    else {
+        printf("\n");
+        printf("What will you do?\n");
+        printf("Option 1: \n");
+        printf("Option 2: \n");
+        printf("Option 3: \n");
+        printf("Option 4: \n");
+        printf("What path will your kingdom take, please select an option: ");
+        scanf("%d", &final);
+        return final;
+    }
 }
 
 int getEvent() {
 
 }
 
-int isAlive(struct player_values input) {
-    if (input.gold == 0) {
+int isAlive(struct player_values input) { //Returns true if the character is still alive
+    if (input.population == 0) {
         return 1;
     }
     return 0;
