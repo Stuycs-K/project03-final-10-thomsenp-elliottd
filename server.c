@@ -11,11 +11,19 @@
 
 int main(){
     int counter = 0;
-    int playerCOunt
+    
+    char line_buff[256];
+    int PLAYERCOUNT;
+    int difficulty;
 
-    printf("Please type the number of expected players and the difficulty as a number 1-10(Ex: 5 5 is 5 players at average difficulty)");
-    printf("At any time after the first player joins you can start the game by typing start");
-    sscanf()//pull sockets get player count, get difficulty
+    printf("Please type the number of expected players and the difficulty as a number 1-10   (Ex: 5 5 is 5 players at average difficulty)\n\n");
+    
+    fflush(stdout);
+    fgets(line_buff,255,stdin);
+
+    sscanf(line_buff,"%d %d",&PLAYERCOUNT, &difficulty);
+   
+    printf("At any time after the first player joins you can start the game by typing 'start game'\n\n");
     
     //CODE COPIED AND BEING EDITED
     struct addrinfo * hints, * results;
@@ -44,46 +52,57 @@ int main(){
         printf("Error binding: %s",strerror(errno));
         exit(1);
     }
-    listen(listen_socket, PLAYERCOUNT);//3 clients can wait to be processed
+    listen(listen_socket, PLAYERCOUNT);
     printf("Listening on port %s\n",PORT);
 
     socklen_t sock_size;
     struct sockaddr_storage client_address;
     sock_size = sizeof(client_address);
-    int currentClients[PLAYERCOUNT] = 0;
+    int currentClients[PLAYERCOUNT];
     fd_set read_fds;
+    
 
     char buff[1025]="";
     int notStarting = 1;
     counter = 0;
+    
     while(notStarting){
         
 
-        FD_ZERO(&read_fds);#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <time.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <unistd.h>
-#include <stdlib.h>
-            notStarting = 0;
+        FD_ZERO(&read_fds);
+        FD_SET(listen_socket, &read_fds);
+        FD_SET(STDIN_FILENO, &read_fds);
+        for (int i = 0; i<counter;i++){
+            FD_SET(currentClients[i], &read_fds);
         }
+        
+        if(counter >= PLAYERCOUNT){
+            notStarting = 0;
+            printf("WORKING\n");
+            fflush(stdout);
+        }
+        
 
         else{
         //if standard in, use fgets
-        if (FD_ISSET(STDIN_FILENO, &read_fds)) {
-            fgets(buff, sizeof(buff), stdin);
-            buff[strlen(buff)-1]=0;
-            if(strcmp(buff, "start game") == 0){
-                notStarting = 0;
-            }
+            if (FD_ISSET(STDIN_FILENO, &read_fds)) {
+                if(fgets(buff, sizeof(buff), stdin) == NULL){
+                    printf("stdin failing");
+                }
+                buff[strlen(buff)-1]=0;
+                if(!strcmp(buff, "start game")){
+                    notStarting = 0;
+                }
+                else{
+                    printf("%s\n", buff);
+                    
+                }
         }
 
         // if socket
         if (FD_ISSET(listen_socket, &read_fds)) {
+            printf("recieved connections\n");
+            fflush(stdout);
             //accept the connection
             int client_socket = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
             printf("Connected, waiting for data.\n");
@@ -114,7 +133,6 @@ int main(){
 
 
 
-}
 //select -> create sockets for each player -> up to num of players
 //start game pulling faction/talent data from players
 //send all players starting gold, troops, and cities(based on diffuclty, factions, and talents)
