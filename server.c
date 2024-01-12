@@ -25,7 +25,7 @@ int main(){
    
     printf("At any time after the first player joins you can start the game by typing 'start game'\n\n");
     
-    //CODE COPIED AND BEING EDITED
+    
     struct addrinfo * hints, * results;
     hints = calloc(1,sizeof(struct addrinfo));
     char* PORT = "9998";
@@ -37,7 +37,7 @@ int main(){
     getaddrinfo(NULL, PORT , hints, &results);  //NULL is localhost or 127.0.0.1
 
     //create socket
-    int listen_socket = socket(results->ai_family, results->ai_socktype, results->ai_protocol);\
+    int listen_socket = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
 
     //this code allows the port to be freed after program exit.  (otherwise wait a few minutes)
     int yes = 1;
@@ -75,6 +75,8 @@ int main(){
         for (int i = 0; i<counter;i++){
             FD_SET(currentClients[i], &read_fds);
         }
+        printf("working up to here 0\n");
+        fflush(stdout);
         
         if(counter >= PLAYERCOUNT){
             notStarting = 0;
@@ -85,19 +87,7 @@ int main(){
 
         else{
         //if standard in, use fgets
-            if (FD_ISSET(STDIN_FILENO, &read_fds)) {
-                if(fgets(buff, sizeof(buff), stdin) == NULL){
-                    printf("stdin failing");
-                }
-                buff[strlen(buff)-1]=0;
-                if(!strcmp(buff, "start game")){
-                    notStarting = 0;
-                }
-                else{
-                    printf("%s\n", buff);
-                    
-                }
-        }
+          
 
         // if socket
         if (FD_ISSET(listen_socket, &read_fds)) {
@@ -108,18 +98,28 @@ int main(){
             printf("Connected, waiting for data.\n");
 
             //read the whole buff
-            read(client_socket,buff, sizeof(buff));
-            //trim the string
-            buff[strlen(buff)-1]=0; //clear newline
-            if(buff[strlen(buff)-1]==13){
-                //clear windows line ending
-                buff[strlen(buff)-1]=0;
-            }
+            
             currentClients[counter++] = client_socket;
             
 
-            printf("\nRecieved from client '%s'\n",buff);
+            printf("\nCLient count'%d'\n",counter);
             close(client_socket);
+        }
+
+          if (FD_ISSET(STDIN_FILENO, &read_fds)) {
+                if(fgets(buff, sizeof(buff), stdin) == NULL){
+                    printf("stdin failing");
+                }
+                buff[strlen(buff)-1]=0;
+                if(!strcmp(buff, "start game")){
+                    printf("\nGAME STARTING\n");
+                    fflush(stdout);
+                    notStarting = 0;
+                }
+                else{
+                    printf("%s\n", buff);
+                    
+                }
         }
         }
     }
