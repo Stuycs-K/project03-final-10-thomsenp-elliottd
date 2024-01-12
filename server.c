@@ -11,16 +11,19 @@
 
 int main(){
     int counter = 0;
-    int playerCOunt;
+    
     char line_buff[256];
     int PLAYERCOUNT;
     int difficulty;
 
     printf("Please type the number of expected players and the difficulty as a number 1-10   (Ex: 5 5 is 5 players at average difficulty)\n\n");
-    printf("At any time after the first player joins you can start the game by typing start\n\n");
+    
+    fflush(stdout);
     fgets(line_buff,255,stdin);
 
     sscanf(line_buff,"%d %d",&PLAYERCOUNT, &difficulty);
+   
+    printf("At any time after the first player joins you can start the game by typing 'start game'\n\n");
     
     //CODE COPIED AND BEING EDITED
     struct addrinfo * hints, * results;
@@ -57,32 +60,49 @@ int main(){
     sock_size = sizeof(client_address);
     int currentClients[PLAYERCOUNT];
     fd_set read_fds;
+    
 
     char buff[1025]="";
     int notStarting = 1;
     counter = 0;
+    
     while(notStarting){
         
 
         FD_ZERO(&read_fds);
+        FD_SET(listen_socket, &read_fds);
+        FD_SET(STDIN_FILENO, &read_fds);
+        for (int i = 0; i<counter;i++){
+            FD_SET(currentClients[i], &read_fds);
+        }
         
-        if(!counter < PLAYERCOUNT){
+        if(counter >= PLAYERCOUNT){
             notStarting = 0;
+            printf("WORKING\n");
+            fflush(stdout);
         }
         
 
         else{
         //if standard in, use fgets
             if (FD_ISSET(STDIN_FILENO, &read_fds)) {
-                fgets(buff, sizeof(buff), stdin);
+                if(fgets(buff, sizeof(buff), stdin) == NULL){
+                    printf("stdin failing");
+                }
                 buff[strlen(buff)-1]=0;
-                if(strcmp(buff, "start game") == 0){
+                if(!strcmp(buff, "start game")){
                     notStarting = 0;
+                }
+                else{
+                    printf("%s\n", buff);
+                    
                 }
         }
 
         // if socket
         if (FD_ISSET(listen_socket, &read_fds)) {
+            printf("recieved connections\n");
+            fflush(stdout);
             //accept the connection
             int client_socket = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
             printf("Connected, waiting for data.\n");
