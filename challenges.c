@@ -96,7 +96,7 @@ int uncommonEvent(int random, struct player_values input){
     }
     else if (random <= 65+8*2) {
         printf("A great hero visits your kingdom, many flock to visit them. You gain 300 gold.\n");
-        input.gold += 300;
+        input.gold += (int) (300 * input.goldMulti);
     }
     else {
         printf("A cult forms in your kingdom, many kill themselves in hopes of meeting the great flying spaghetti monster. You lose 120 people.");
@@ -115,8 +115,8 @@ int rareEvent(int random, struct player_values input) {
     else {
         printf("Mr.K has smiled upon you. You gain 400 gold and two cities.\n");
         input.cities += 2;
-        input.gold += 400;
-        input.population += 400;
+        input.gold += (int) (400 * input.goldMulti);
+        input.population += (int) (400 * input.populationMulti);
     }
 }
 
@@ -163,16 +163,96 @@ int serverLevel() {
         return final;
     }
     else {
-        printf("\n");
+        printf("SHARKNADO!!!!!!\n");
         printf("What will you do?\n");
-        printf("Option 1: \n");
-        printf("Option 2: \n");
-        printf("Option 3: \n");
-        printf("Option 4: \n");
+        printf("Option 1: What's a Shark...? OH GOD!\n");
+        printf("Option 2: Send in the troops.\n");
+        printf("Option 3: Send in the treasury.\n");
+        printf("Option 4: Send in the... people I guess?\n");
         printf("What path will your kingdom take, please select an option: ");
         scanf("%d", &final);
         return final;
     }
+}
+
+int eventInput(int random, int response, struct player_values input) {
+  if (random <= 1) { //Goblin Empire
+    if (response == 1) { //Ignore
+      printf("The goblins are mighty and powerful!!!! But they also never even heard of your kingdom so they pass you by.\n");
+      //no changes to the kingdom since nothing happened
+    }
+    else if (response == 2) { //Prepare for siege
+      printf("The goblins hear word of your preparations and launch a massive assault.\n");
+      printf("Your kingdom is able to resist the goblins until they need to retreat because of other forces.\n");
+      printf("You have lost 350 gold.");
+      input.gold -= 350;
+    }
+    else if (response == 3) { //Preemptive strike
+      printf("The massive goblin army is caught off guard by your offensive measures!\n");
+      printf("Your army fights admirably and wins you the battle but many troops are lost.\n");
+      printf("You gain 600 gold but sacrifice 400 troops\n");
+      input.gold += (int) (600 * input.goldMulti);
+      input.troops -= 400;
+    }
+    else { //Diplomacy
+      printf("Your translator was lying about speaking the goblin language and has greatly offended their emperor.\n");
+      printf("Your nation now must face the full force of the goblin army and you suffer many losses.\n");
+      printf("You lose 400 citizens, 500 troops, and 650 gold.\n");
+      input.gold -= 650;
+      input.population -= 400;
+      input.troops -= 500;
+    }
+  }
+  else if (random <= 2) { //Plague
+    if (response == 1) { //Ignore
+      printf("The plague ravages your nation and you lose countless people.\n");
+      printf("You lose 700 citizens.\n");
+      input.population -= 700;
+    }
+    else if (response == 2) { //Buy doctors
+      printf("You spend half of your treasury to get the best doctors from accross the world and stem the spread of the virus\n");
+      printf("You have lost %d gold.", input.gold/2);
+      input.gold /= 2;
+    }
+    else if (response == 3) { //Kill the sick
+      printf("Countless citizens die but you successfully stop the disease.\n");
+      printf("You lose 800 from your population and 200 troops\n");
+      input.troops -= 200;
+      input.population -= 800;
+    }
+    else { //PRAY
+      printf("The church does not do very much in terms of giving you \"tangible results\"\n");
+      printf("You lose 550 gold and 600 people\n");
+      input.gold -= 550;
+      input.population -= 600;
+    }
+  }
+  else { //SHARKNADO!!!
+    if (response == 1) { //Ignore
+      printf("The Sharknado decimates your kingdom.\n");
+      printf("You lose 600 citizens and two cities\n");
+      input.population -= 600;
+      input.cities -= 2;
+    }
+    else if (response == 2) { //Send in the troops
+      printf("What did you expect the troops to do about a tornado of sharks?\n");
+      printf("The sharknado decimates your troops and continues on to your kingdom.")
+      printf("You have lost 400 troops, 400 people, and a city.");
+      input.troops -= 400;
+      input.population -= 400;
+      input.cities -= 1;
+    }
+    else if (response == 3) { //Send in the treasury
+      printf("The sharks die as they're thrown into the gold and the tornado is diverted by the power of money.\n");
+      printf("You lose 500 gold\n");
+      input.gold -= 500;
+    }
+    else { //Send in the people
+      printf("The sharks just... they just eat a lot of your people.\n");
+      printf("You lose 700 people\n");
+      input.population -= 700;
+    }
+  }
 }
 
 int getEvent() {
@@ -185,4 +265,3 @@ int isAlive(struct player_values input) { //Returns true if the character is sti
     }
     return 0;
 }
-
