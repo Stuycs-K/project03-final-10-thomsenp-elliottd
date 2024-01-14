@@ -23,6 +23,11 @@ Data structures as of now: file system for calling data(e.g. troop type number t
     
 # Intended pacing:
 
-1/10/24: Finish server setup, have game structure working
-1/13/24: Finish game(To point of playability)
-1/16/24: Finish debugging, making quality of life improvements
+#Updated Schedule:
+
+*get server side done -> starting, rounds, challenge system but not content(daniel)
+*get client side done -> initalizing factions, turns, accepting challenges, initalizing duels/wagers(daniel)
+*get  methods done -> challenges, duels, wagers, events, final battle(preston)
+*get data -> challenge types, events, faction buffs(preston)
+*get get data methods(daniel) 
+*playtest
