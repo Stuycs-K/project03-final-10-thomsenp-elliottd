@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include "challenges.h"
 
 int err() {
     printf("errno %d\n%s\n", errno, strerror(errno));
@@ -137,7 +138,7 @@ int tribeLevel(struct player_values input) {
     }
 }
 
-int serverLevel() {
+int serverLevel(struct player_values input) {
     int random = randyLit()%3 + 1;
     int final;
     if (random <= 1) {
@@ -149,6 +150,7 @@ int serverLevel() {
         printf("Option 4: Attempt diplomacy with the goblins (Do you have a good translator?).\n");
         printf("What path will your kingdom take, please select an option: ");
         scanf("%d", &final);
+        eventInput(random, final, input);
         return final;
     }
     else if (random <= 2) {
@@ -160,6 +162,7 @@ int serverLevel() {
         printf("Option 4: Turn to the church and believe in the power of god(s).\n");
         printf("What path will your kingdom take, please select an option: ");
         scanf("%d", &final);
+        eventInput(random, final, input);
         return final;
     }
     else {
@@ -171,6 +174,7 @@ int serverLevel() {
         printf("Option 4: Send in the... people I guess?\n");
         printf("What path will your kingdom take, please select an option: ");
         scanf("%d", &final);
+        eventInput(random, final, input);
         return final;
     }
 }
@@ -253,10 +257,6 @@ int eventInput(int random, int response, struct player_values input) {
       input.population -= 700;
     }
   }
-}
-
-int getEvent() {
-
 }
 
 int isAlive(struct player_values input) { //Returns true if the character is still alive
