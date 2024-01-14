@@ -265,3 +265,28 @@ int isAlive(struct player_values input) { //Returns true if the character is sti
     }
     return 0;
 }
+
+int gainGold(struct player_values input) { //Used every round because the cities pay taxes to you
+  input.gold += (int) (100 * input.goldMulti * input.cities);
+}
+
+int buyTroops(int numTroops, struct player_values input) { //Used as an option for an action to purchase troops
+  if (input.gold >= numTroops * 10) {
+    input.gold -= numTroops * 10;
+    input.troops += (int) (numTroops * input.troopsMulti);
+  }
+  else {
+    printf("You do not have enough gold to purchase that many troops.\n");
+  }
+}
+
+int buyCities(int numCities, struct player_values input) {
+  if (input.gold >= numCities * 150) {
+    input.gold -= numCities * 150;
+    input.cities += numCities;
+    input.population += (int) (200 * input.populationMulti);
+  }
+  else {
+    printf("You do not have enough gold to purchase that many cities.\n");
+  }
+}
