@@ -284,14 +284,69 @@ int currentStatus(struct player_values input) { //Should be called every round b
   printf("Cities: %d\n", input.cities);
 }
 
+int optionsToTakeEachRound(struct player_values input) { //Should likely be run after the event for that round
+  printf("What actions would you like to take?\n");
+  printf("Option 1: See status\n");
+  printf("Option 2: Buy troops (10 gold and 1 citizen per troop)\n");
+  printf("Option 3: Buy cities (150 gold per city)\n");
+  printf("Option 4: Proceed to the next round\n");
+  printf("Option 5: Challenge final boss\n");
+  printf("What option do you select? ");
+
+  int final;
+  int holding;
+
+  scanf("%d", &final);
+  if (final == 1) {
+    currentStatus(input);
+    final = optionsToTakeEachRound(input);
+  }
+  else if (final == 2) {
+    printf("How many troops would you like to buy? ");
+    scanf("%d", holding);
+    if (buyTroops(holding, input)) {
+      final = optionsToTakeEachRound(input);
+    }
+  }
+  else if (final == 3) {
+    printf("How many cities would you like to buy? ");
+    scanf("%d", holding);
+    if (buyCities(holding, input)) {
+      final = optionsToTakeEachRound(input);
+    }
+  }
+  else if (final == 4) {
+    //I do not know if we should do anything here, I presume not since the player did not want to but maybe we should make some indicator for skipping
+    //If nothing else it helps with the final else statement at the end of this function
+  }
+  else if (final == 5) {
+    if (input.troops >= 5000 && input.cities >= 6 && input.population >= 6500) {
+      return final;
+    }
+    else {
+      printf("You are not yet qualified for the final boss which requires 5000 troops, 6 cities, and 6500 citizens at least to challenge\n");
+      printf("Please try again after growing your kingdom.\n");
+      final = optionsToTakeEachRound(input);
+    }
+  }
+  else {
+    printf("You did not select a valid option, please try again.\n");
+    final = optionsToTakeEachRound(input);
+  }
+  return final; //Returns the value for use again and again
+}
+
 int buyTroops(int numTroops, struct player_values input) { //Used as an option for an action to purchase troops
   if (input.gold >= numTroops * 10) {                      //Must sacrafice as many member of your population as you want troops
     input.gold -= numTroops * 10;                          //Troops cost 10 gold each (flat fee)
     input.troops += (int) (numTroops * input.troopsMulti);
     input.population -= numTroops;
+    printf("You have spent %d gold to buy %d troops and lost %d citizens.\n", numTroops * 10, (int) (numTroops * input.troopsMulti), numTroops);
+    return 0;
   }
   else {
     printf("You do not have enough gold to purchase that many troops.\n");
+    return 1;
   }
 }
 
@@ -300,8 +355,11 @@ int buyCities(int numCities, struct player_values input) { //Each purchase of a 
     input.gold -= numCities * 150;
     input.cities += numCities;
     input.population += (int) (200 * input.populationMulti);
+    printf("You have spent %d gold to buy %d cities and gained %d citizens.\n", numCities * 150, numCities, (int) (200 * input.populationMulti));
+    return 0;
   }
   else {
     printf("You do not have enough gold to purchase that many cities.\n");
+    return 1;
   }
 }
