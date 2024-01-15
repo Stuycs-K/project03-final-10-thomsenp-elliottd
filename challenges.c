@@ -272,7 +272,16 @@ int isAlive(struct player_values input) { //Returns true if the character is sti
 
 int gainFromCities(struct player_values input) { //Used every round because the cities pay taxes to you and grow over time
   input.gold += (int) (100 * input.goldMulti * input.cities);
-  input.population += (int) (50 * input.populationMulti * input.cities);
+  input.population += (int) (50 * input.populationMulti * input.cities); //Bellow we update the player on their gains
+  printf("You have gained %d gold and %d people from your cities.\n", (int) (100 * input.goldMulti * input.cities), (int) (50 * input.populationMulti * input.cities));
+}
+
+int currentStatus(struct player_values input) { //Should be called every round before we offer the options for what to do so that the player knows what is up
+  printf("Here is your kingdom's current status readout:\n");
+  printf("Gold: %d\n", input.gold);
+  printf("Population: %d\n", input.population);
+  printf("Troops: %d\n", input.troops);
+  printf("Cities: %d\n", input.cities);
 }
 
 int buyTroops(int numTroops, struct player_values input) { //Used as an option for an action to purchase troops
