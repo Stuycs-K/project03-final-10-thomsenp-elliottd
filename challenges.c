@@ -12,7 +12,7 @@ int err() {
     exit(1);
 }
 
-int randyLit() {
+int randyLit() { //Randomly fill an integer variable with data that can be manipulated into a random number
     int randNum;
     int* pointer = &randNum;
     int recieve = open("/dev/random", O_RDONLY);
@@ -25,9 +25,10 @@ int randyLit() {
     return *pointer;
 }
 
-int duel(struct player_values mine, struct player_values opponent) {
-    int sum = mine.troops + opponent.troops;
-    int random = randyLit()%sum + 1;
+int duel(struct player_values mine, struct player_values opponent) { //Initiate a duel on your end and this will determine who the winner is and handle all of the
+    int sum = mine.troops + opponent.troops;                         //subsequent winnings and whatnot
+    int random = randyLit()%sum + 1;                                 //The math is basically that if the random number lands in your amount of troops you win
+                                                                     //If it is in your opponent's amount of troops then they win
     if (random > mine.troops) {
         opponent.troops += 1;
         mine.troops -= 1;
@@ -40,9 +41,9 @@ int duel(struct player_values mine, struct player_values opponent) {
     }
 }
 
-int wager(struct player_values mine, struct player_values opponent, int amount) {
+int wager(struct player_values mine, struct player_values opponent, int amount) { //Same sort of thing as duel but fifty/fifty chance and beting gold
     int random = randyLit()%2 + 1;
-    if (random > mine.troops) {
+    if (random == 1) {
         opponent.gold += amount;
         mine.gold -= amount;
     }
@@ -52,23 +53,23 @@ int wager(struct player_values mine, struct player_values opponent, int amount) 
     }
 }
 
-int tribeEntry(int tribe, struct player_values input) {
+int tribeEntry(int tribe, struct player_values input) { //This command edits a player's multi value for whatever faction/tribe they chose
     input.troopMulti = 1.0;
     input.goldMulti = 1.0;
     input.populationMulti = 1.0;
     if (tribe == 0) {
-        input.troopMulti = 1.1;
+        input.troopMulti = 1.1; //This is fire because they do well in the heat of battle
     }
     else if (tribe == 1) {
-        input.goldMulti = 1.1;
+        input.goldMulti = 1.1; //This is water because it keeps their assets liquid
     }
     else if (tribe == 2){
-        input.populationMulti = 1.1;
+        input.populationMulti = 1.1; //This is grass because their nation is growing strong roots
     }
 }
 
-int commonEvent(int random, struct player_values input){
-    if (random <= 13) {
+int commonEvent(int random, struct player_values input){ //Simple common events for individual events (Very low stakes)
+    if (random <= 13) {                                  //Uses the same random that was made to determine if the event should be common, uncommon, or rare
         printf("Your kingdom faces harsh weather, you lose 20 gold.\n");
         input.gold -= 20;
     }
@@ -89,7 +90,7 @@ int commonEvent(int random, struct player_values input){
     }
 }
 
-int uncommonEvent(int random, struct player_values input){
+int uncommonEvent(int random, struct player_values input){ //Same deal as the Common event just with higher stakes
     if (random <= 65+8) {
         printf("Your city floods and much is lost, you lose 100 gold and 50 people.\n");
         input.population -= 50;
@@ -105,7 +106,7 @@ int uncommonEvent(int random, struct player_values input){
     }
 }
 
-int rareEvent(int random, struct player_values input) {
+int rareEvent(int random, struct player_values input) { //Once again the same thing as the previous individual events
     if (random <= 94) {
         printf("A dragon attacks your kingdom! You lose 2 cities, 400 people, 320 gold, and 330 troops.\n");
         input.cities -= 2;
@@ -121,15 +122,18 @@ int rareEvent(int random, struct player_values input) {
     }
 }
 
-int tribeLevel(struct player_values input) {
+int tribeLevel(struct player_values input) { //Determines whether the event for that round should be common
     int random = randyLit()%100 +1;
-    if (random <= 65) {read
+    if (random <= 65) { //There is a 65% chance of a common event when there is an individual event
+      commonEvent(random, input);
+    }
+    else if (random <= 89) { //There is a 24% chance of an uncommon event when there is an individual event
         uncommonEvent(random, input);
     }
-    else if (random <= 99) {
+    else if (random <= 99) { //There is a 10% chance of a rare event when there is an individual event
         rareEvent(random, input);
     }
-    else {
+    else { //There is a 1% chance of immediately losing when there is an individual event.
         printf("EVERYTHING IS ON FIRE, AAAAAAAAAAH.\n");
         sleep(2);
         printf("Your kingdom is burnt to ash, you could not do anything. L.\n");
@@ -138,8 +142,8 @@ int tribeLevel(struct player_values input) {
     }
 }
 
-int serverLevel(struct player_values input) {
-    int random = randyLit()%3 + 1;
+int serverLevel(struct player_values input) { //There are three potential serverLevel events
+    int random = randyLit()%3 + 1;            //Should definitely be restricted from happening even with a low likelihood until a certain number of rounds have passed
     int final;
     if (random <= 1) {
         printf("The goblin empire is aiming to conquer everything. Your nation is in its warpath.\n");
@@ -150,8 +154,8 @@ int serverLevel(struct player_values input) {
         printf("Option 4: Attempt diplomacy with the goblins (Do you have a good translator?).\n");
         printf("What path will your kingdom take, please select an option: ");
         scanf("%d", &final);
-        eventInput(random, final, input);
-        return final;
+        eventInput(random, final, input); //Function to determine the outcome of the user's choice
+        return final; //Returns what the player has selected
     }
     else if (random <= 2) {
         printf("A plague is sweeping the continent. Your people live in terrible fear of the Miasma of Doom\n");
@@ -162,8 +166,8 @@ int serverLevel(struct player_values input) {
         printf("Option 4: Turn to the church and believe in the power of god(s).\n");
         printf("What path will your kingdom take, please select an option: ");
         scanf("%d", &final);
-        eventInput(random, final, input);
-        return final;
+        eventInput(random, final, input); //Function to determine the outcome of the user's choice
+        return final; //Returns what the player has selected
     }
     else {
         printf("SHARKNADO!!!!!!\n");
@@ -174,8 +178,8 @@ int serverLevel(struct player_values input) {
         printf("Option 4: Send in the... people I guess?\n");
         printf("What path will your kingdom take, please select an option: ");
         scanf("%d", &final);
-        eventInput(random, final, input);
-        return final;
+        eventInput(random, final, input); //Function to determine the outcome of the user's choice
+        return final; //Returns what the player has selected
     }
 }
 
@@ -266,27 +270,96 @@ int isAlive(struct player_values input) { //Returns true if the character is sti
     return 0;
 }
 
-int gainGold(struct player_values input) { //Used every round because the cities pay taxes to you
+int gainFromCities(struct player_values input) { //Used every round because the cities pay taxes to you and grow over time
   input.gold += (int) (100 * input.goldMulti * input.cities);
+  input.population += (int) (50 * input.populationMulti * input.cities); //Bellow we update the player on their gains
+  printf("You have gained %d gold and %d people from your cities.\n", (int) (100 * input.goldMulti * input.cities), (int) (50 * input.populationMulti * input.cities));
+}
+
+int currentStatus(struct player_values input) { //Should be called every round before we offer the options for what to do so that the player knows what is up
+  printf("Here is your kingdom's current status readout:\n");
+  printf("Gold: %d\n", input.gold);
+  printf("Population: %d\n", input.population);
+  printf("Troops: %d\n", input.troops);
+  printf("Cities: %d\n", input.cities);
+}
+
+int optionsToTakeEachRound(struct player_values input) { //Should likely be run after the event for that round
+  printf("What actions would you like to take?\n");
+  printf("Option 1: See status\n");
+  printf("Option 2: Buy troops (10 gold and 1 citizen per troop)\n");
+  printf("Option 3: Buy cities (150 gold per city)\n");
+  printf("Option 4: Proceed to the next round\n");
+  printf("Option 5: Challenge final boss\n");
+  printf("What option do you select? ");
+
+  int final;
+  int holding;
+
+  scanf("%d", &final);
+  if (final == 1) {
+    currentStatus(input);
+    final = optionsToTakeEachRound(input);
+  }
+  else if (final == 2) {
+    printf("How many troops would you like to buy? ");
+    scanf("%d", holding);
+    if (buyTroops(holding, input)) {
+      final = optionsToTakeEachRound(input);
+    }
+  }
+  else if (final == 3) {
+    printf("How many cities would you like to buy? ");
+    scanf("%d", holding);
+    if (buyCities(holding, input)) {
+      final = optionsToTakeEachRound(input);
+    }
+  }
+  else if (final == 4) {
+    //I do not know if we should do anything here, I presume not since the player did not want to but maybe we should make some indicator for skipping
+    //If nothing else it helps with the final else statement at the end of this function
+  }
+  else if (final == 5) {
+    if (input.troops >= 5000 && input.cities >= 6 && input.population >= 6500) {
+      return final;
+    }
+    else {
+      printf("You are not yet qualified for the final boss which requires 5000 troops, 6 cities, and 6500 citizens at least to challenge\n");
+      printf("Please try again after growing your kingdom.\n");
+      final = optionsToTakeEachRound(input);
+    }
+  }
+  else {
+    printf("You did not select a valid option, please try again.\n");
+    final = optionsToTakeEachRound(input);
+  }
+  return final; //Returns the value for use again and again
 }
 
 int buyTroops(int numTroops, struct player_values input) { //Used as an option for an action to purchase troops
-  if (input.gold >= numTroops * 10) {
-    input.gold -= numTroops * 10;
+  if (input.gold >= numTroops * 10) {                      //Must sacrafice as many member of your population as you want troops
+    input.gold -= numTroops * 10;                          //Troops cost 10 gold each (flat fee)
     input.troops += (int) (numTroops * input.troopsMulti);
+    input.population -= numTroops;
+    printf("You have spent %d gold to buy %d troops and lost %d citizens.\n", numTroops * 10, (int) (numTroops * input.troopsMulti), numTroops);
+    return 0;
   }
   else {
     printf("You do not have enough gold to purchase that many troops.\n");
+    return 1;
   }
 }
 
-int buyCities(int numCities, struct player_values input) {
-  if (input.gold >= numCities * 150) {
+int buyCities(int numCities, struct player_values input) { //Each purchase of a city nets 200 population increase
+  if (input.gold >= numCities * 150) {                     //A city costs 150 gold so that the city pays for itself twice over in three rounds
     input.gold -= numCities * 150;
     input.cities += numCities;
     input.population += (int) (200 * input.populationMulti);
+    printf("You have spent %d gold to buy %d cities and gained %d citizens.\n", numCities * 150, numCities, (int) (200 * input.populationMulti));
+    return 0;
   }
   else {
     printf("You do not have enough gold to purchase that many cities.\n");
+    return 1;
   }
 }
