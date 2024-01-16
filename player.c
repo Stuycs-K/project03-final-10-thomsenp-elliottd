@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include "challenges.h"
 
 int main(){
     
@@ -62,6 +63,10 @@ int main(){
 
     close(client_socket);
     printf("Game starting...\n");
+
+
+    struct player_values yourPlayer = 
+    //each turn check if alive
 
     return 0;
 }

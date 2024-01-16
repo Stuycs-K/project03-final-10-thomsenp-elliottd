@@ -153,7 +153,24 @@ int main(){
 
         }
     }
-
+   int roundCount = 0;
+   int fdMax = -1;
+    FD_ZERO(&read_fds);
+    FD_SET(listen_socket, &read_fds);
+    if(listen_socket > fdMax){
+            fdMax = listen_socket;
+    }
+    FD_SET(STDIN_FILENO, &read_fds);
+    if(STDIN_FILENO > fdMax){
+            fdMax = STDIN_FILENO;
+        }
+    for (int i = 0; i<counter;i++){
+            FD_SET(currentClients[i], &read_fds);
+            if(currentClients[i] > fdMax){
+            fdMax = currentClients[i];
+        }
+        }
+    int i = select(fdMax+1, &read_fds, NULL, NULL, NULL);
 
 
     free(hints);
