@@ -41,6 +41,7 @@ int main(){
     }
 
     char buff[1025];
+    char serverBuff[1025];
     buff[0] = '\0'; // Initialize the first element to null character
     printf("Connected to server. Type 'start game' to begin.\n");
 
@@ -59,83 +60,46 @@ int main(){
         if (strcmp(buff, "start game") == 0) {
             break; // Exit the loop after sending "start game"
         }
+
+        if(read(client_socket, serverBuff, 50) != -1){
+            if(!strcmp(serverBuff, "1")){
+                break;
+            }
+        }
     }
 
     close(client_socket);
     printf("Game starting...\n");
+    int tribe = 0;
+    int turnBegun = 0;
+    int roundCount;
+    printf("Time to choose your tribe! Type 0 to choose fire, and get a x1.1 multiplier to troop gain, type 1 to choose water and get a 1.1x multiplier to gold gain, and type 2 to choose grass, and get a 1.1x to population gain\n");
+    while(scanf("%d", &tribe) != 1){
+        printf("please enter a valid input(0, 1, or 2)");
+    }
+    
+    struct player_values yourPlayer = {.gold = 100, .troops = 100, .cities = 2, .population = 400, .troopMulti = 1.0, .goldMulti = 1.0, .populationMulti = 1.0,};
+    tribeEntry(tribe, yourPlayer);
+    while(!isAlive(yourPlayer)){
+        printf("\n\nRound: %d\n");
+        if(!turnBegun){
+            gainFromCities(yourPlayer);
+            currentStatus(yourPlayer);
+            turnBegun = 1;
+
+        }
+        
+        while( optionsToTakeEachRound(yourPlayer) != 4){}
+        turnBegun = 0;
+    }
 
 
-    struct player_values yourPlayer = 
     //each turn check if alive
+    //each turn run gain from cities, current status
 
     return 0;
 }
-// int main(){
-//     char currentInput[100];
-//     int turnNum = 0;
 
-//     int client_tcp_handshake(char * server_address) {
-//     struct addrinfo * hints, * results;
-//     hints = calloc(1,sizeof(struct addrinfo));
-//     hints->ai_family = AF_INET;
-//     hints->ai_socktype = SOCK_STREAM; //TCP socket
-//     getaddrinfo(server_address, PORT, hints, &results);
-  
-//     int serverd = socket(AF_INET, SOCK_STREAM,0);
-//     connect(serverd, results->ai_addr, results->ai_addrlen);
-//   //connect to the server
-  
-//   free(hints);
-//   freeaddrinfo(results);
-
-//   return serverd;
-// }
-//     while(1){
-//         printf("Turn:%d    Type 's' to see current stats, 'r' to see and recruit troops, 'c' to see and take on challenges and duels, and 'b' to see and build buildings\n", turnNum);
-//         scanf("%99s", currentInput); // Reads a string from stdin until a space is encountered
-        
-        
-
-//         if(strcmp(currentInput, "s") == 0){
-//             printf("Gold = PLACEHOLDER\nPopulation = PLACEHOLDER\nGold per Turn = PLACEHOLDER\nPopulation per Turn = PLACEHOLDER\nFaction = PLACEHOLDER\nCurrent Talents = PLACEHOLDER\nGlobal Gold Ranking = PLACEHOLDER LIST\nGlobal Military Ranking = PLACEHOLDER LIST\n");
-//             turnNum++;
-//         }
-
-//         else if(strcmp(currentInput, "r") == 0){
-//             printf("Current Troops = PLACEHOLDER LIST WITH NUMS AND STATS\nTroops Avaliable\n type '0 numOfTroops'(Ex: 10) to select TROOP 1: PRICE\nSTATS = PLACEHOLDER LIST\nREPEAT AS NEEDED\n");
-//             printf("Desired troop and number('x' to cancel)");
-//             scanf("%99s", currentInput);
-//             //will not work as is, based on spaces
-//             printf("troopTest%s", currentInput);
-//             //scan to get int, run through list
-//             turnNum++;
-            
-//         }
-
-//         else if(strcmp(currentInput, "c") == 0){
-//             printf("Turn Challenge = PLACEHOLDER\nOngoging Server Challenge = PLACEHOLDER\nPlayer List = PLACEHOLDER LIST\nFINAL BATTLE REQUIREMENTS = PLACEHOLDER\n");
-//             printf("Desired menu('x' to cancel)");
-//             scanf("%99s", currentInput);
-//             printf("challengeTest%s", currentInput);
-//             turnNum++;
-            
-//         }
-
-//         else if(strcmp(currentInput, "b") == 0){
-//             printf("Current Buildings = PLACEHOLDER LIST\nBuildings avaliable = LIST WITH PRICES AND TIME\n");
-//             printf("Desired building('x' to cancel)");
-//             scanf("%99s", currentInput);
-//             printf("buildingTest%s", currentInput);
-//             turnNum++;
-            
-//         }
-
-//         else{
-//             printf("Invalid input, please type 's' to see current stats, 'r' to see and recruit troops, 'c' to see and take on challenges and duels, and 'b' to see and build buildings\n");
-//         }
-//     }
-    
-// }
 
 
 

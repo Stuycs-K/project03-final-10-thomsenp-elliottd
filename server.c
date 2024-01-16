@@ -9,6 +9,24 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include "challenges.h"
+void removeElement(int arr[], int *size, int elementToRemove) {
+    int i, j;
+    int newSize = *size;
+
+    for (i = 0; i < newSize; i++) {
+        if (arr[i] == elementToRemove) {
+            // Shift elements to the left to overwrite the element to be removed
+            for (j = i; j < newSize - 1; j++) {
+                arr[j] = arr[j + 1];
+            }
+            newSize--; // Decrease the size of the array
+            i--; // Recheck the current index since elements have shifted
+        }
+    }
+
+    *size = newSize; // Update the size of the array
+}
 
 int main(){
     int counter = 0;
@@ -59,7 +77,7 @@ int main(){
     socklen_t sock_size;
     struct sockaddr_storage client_address;
     sock_size = sizeof(client_address);
-    int currentClients[PLAYERCOUNT];
+    int currentClients[PLAYERCOUNT] = {0};
     fd_set read_fds;
     int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
     fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
@@ -71,7 +89,7 @@ int main(){
     while(notStarting){
         printf("scanning for players... type start game to start the game\n");
         
-        int fdMax = -1;
+       int fdMax = -1;
         FD_ZERO(&read_fds);
         FD_SET(listen_socket, &read_fds);
         if(listen_socket > fdMax){
@@ -80,15 +98,27 @@ int main(){
         FD_SET(STDIN_FILENO, &read_fds);
         if(STDIN_FILENO > fdMax){
             fdMax = STDIN_FILENO;
+            
         }
-        for (int i = 0; i<counter;i++){
-            FD_SET(currentClients[i], &read_fds);
-            if(currentClients[i] > fdMax){
-            fdMax = currentClients[i];
+        printf("got to here\n");
+        fflush(stdout);
+        for (int i = 0; i < counter; i++) {
+            if (currentClients[i] != -1) {
+                FD_SET(currentClients[i], &read_fds);
+                if (currentClients[i] > fdMax) {
+                    fdMax = currentClients[i];
+                }
+            }
         }
+    
+        int i = select(fdMax + 1, &read_fds, NULL, NULL, NULL);
+        if (i < 0) {
+            perror("select");
+            exit(EXIT_FAILURE);
         }
-        int i = select(fdMax+1, &read_fds, NULL, NULL, NULL);
-        
+
+        printf("got to here\n");
+        fflush(stdout);
         if(counter >= PLAYERCOUNT){
             notStarting = 0;
             printf("WORKING\n");
@@ -97,31 +127,8 @@ int main(){
         
 
         else{
-        //if standard in, use fgets
-            if (FD_ISSET(STDIN_FILENO, &read_fds)) {
-                
-                buff[strlen(buff)-1]=0;
-                if(!strcmp(buff, "start game")){
-                    notStarting = 0;
-                }
-                else{
-                    printf("%s\n", buff);
-                    
-                }
-        }
 
-        // if socket
-        if (FD_ISSET(listen_socket, &read_fds)) {
-            
-            fflush(stdout);
-            //accept the connection
-            int connectingClient = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
-            currentClients[counter++] = connectingClient;
-            printf("Connected, to client %d\n", counter);
-            close(connectingClient);
-        }
-
-          if (FD_ISSET(STDIN_FILENO, &read_fds)) {
+             if (FD_ISSET(STDIN_FILENO, &read_fds)) {
                 if(fgets(buff, sizeof(buff), stdin) == NULL){
                     printf("stdin failing");
                 }
@@ -136,25 +143,57 @@ int main(){
                     
                 }
         }
+        //if standard in, use fgets
+            
+        // if socket
+        else if (FD_ISSET(listen_socket, &read_fds)) {
+            
+            fflush(stdout);
+            //accept the connection
+            int connectingClient = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
+            currentClients[counter++] = connectingClient;
+            printf("Connected, to client %d\n", counter);
+            fflush(stdout);
+            
+            
         }
 
-        char clientString[256];
+         
+        
+
+        else{
+            char clientString[256];
         for(int i = 0;i< counter;i++){
            
              if (FD_ISSET(currentClients[i], &read_fds)) {
-                read(currentClients[i], clientString,255);
+                if(read(currentClients[i], clientString,255) != 0){
                 if(!strcmp(clientString, "start game")){
+                    printf("Recieved");
+                    fflush(stdout);
                     notStarting = 0;
+                }
+                else if(!strcmp(clientString, "QUIT")){
+                    printf("trying to delete");
+                    fflush(stdout);
+                    removeElement(currentClients, sizeof(currentClients) / sizeof(currentClients[0]),currentClients[i] );
+                    printf("Client %d quit", ++i);
                 }
                 else{
                     printf("%s\n", clientString);
                 }
              }
+             }
+            
 
         }
+        }
     }
+
+     for(int i = 0;i< counter;i++){
+      write(currentClients[i], "1",2);
+     }
    int roundCount = 0;
-   int fdMax = -1;
+    fdMax = -1;
     FD_ZERO(&read_fds);
     FD_SET(listen_socket, &read_fds);
     if(listen_socket > fdMax){
@@ -170,12 +209,13 @@ int main(){
             fdMax = currentClients[i];
         }
         }
-    int i = select(fdMax+1, &read_fds, NULL, NULL, NULL);
+    i = select(fdMax+1, &read_fds, NULL, NULL, NULL);
 
 
     free(hints);
     freeaddrinfo(results);
     return 0;
+}
 }
 
 

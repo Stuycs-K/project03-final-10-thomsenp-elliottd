@@ -6,25 +6,23 @@ player: compPlayer
 server: compServer
 	@./server
 
-compPlayer: client.o networking.o
-	@gcc -o client client.o prompt.o data.o challenges.o -w
-compServer: server.o networking.o
-	@gcc -o server server.o prompt.o data.o challenges.o -w
+compPlayer: player.o data.o challenges.o
+	@gcc -o player player.o data.o challenges.o -w
+compServer: server.o data.o challenges.o
+	@gcc -o server server.o data.o challenges.o -w
 
-player.o: client.c networking.h
-	@gcc -c client.c
-server.o: server.c networking.h
+player.o: player.c challenges.h
+	@gcc -c player.c
+server.o: server.c challenges.h
 	@gcc -c server.c
-prompt.o: prompt.c prompt.h
-	@gcc -c prompt.c
 data.o: data.c data.h
 	@gcc -c data.c
-challenges.o: challenges.c challenges.h
-	@gcc -c challenges.c
+challenges.o: challenges.c challenges.h player.o
+	@gcc -c challenges.c 
 
 
 clean:
-	@rm -f server client
+	@rm -f server player
 	@rm -f *.o
 	@rm -f *~
 	@rm -f [0-9]*
