@@ -49,14 +49,14 @@ int main(){
         fgets(buff, sizeof(buff) - 1, stdin);
         buff[strlen(buff) - 1] = '\0'; // Remove newline character
 
-        if (strcmp(buff, "start game") == 0) {
-            break;
-        }
-
-        if (send(client_socket, buff, strlen(buff), 0) == -1) {
-            perror("send");
+       if (write(client_socket, buff, strlen(buff)) == -1) {
+            perror("write");
             close(client_socket);
             exit(1);
+        }
+
+        if (strcmp(buff, "start game") == 0) {
+            break; // Exit the loop after sending "start game"
         }
     }
 

@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <fcntl.h>
 
 int main(){
     int counter = 0;
@@ -60,21 +61,33 @@ int main(){
     sock_size = sizeof(client_address);
     int currentClients[PLAYERCOUNT];
     fd_set read_fds;
-    
+    int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
 
     char buff[1025]="";
     int notStarting = 1;
     counter = 0;
     
     while(notStarting){
+        printf("scanning for players... type start game to start the game\n");
         
-
+        int fdMax = -1;
         FD_ZERO(&read_fds);
         FD_SET(listen_socket, &read_fds);
+        if(listen_socket > fdMax){
+            fdMax = listen_socket;
+        }
         FD_SET(STDIN_FILENO, &read_fds);
+        if(STDIN_FILENO > fdMax){
+            fdMax = STDIN_FILENO;
+        }
         for (int i = 0; i<counter;i++){
             FD_SET(currentClients[i], &read_fds);
+            if(currentClients[i] > fdMax){
+            fdMax = currentClients[i];
         }
+        }
+        int i = select(fdMax+1, &read_fds, NULL, NULL, NULL);
         
         if(counter >= PLAYERCOUNT){
             notStarting = 0;
@@ -86,9 +99,7 @@ int main(){
         else{
         //if standard in, use fgets
             if (FD_ISSET(STDIN_FILENO, &read_fds)) {
-                if(fgets(buff, sizeof(buff), stdin) == NULL){
-                    printf("stdin failing");
-                }
+                
                 buff[strlen(buff)-1]=0;
                 if(!strcmp(buff, "start game")){
                     notStarting = 0;
@@ -101,26 +112,29 @@ int main(){
 
         // if socket
         if (FD_ISSET(listen_socket, &read_fds)) {
-            printf("recieved connections\n");
+            
             fflush(stdout);
             //accept the connection
-            int client_socket = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
-            printf("Connected, waiting for data.\n");
-
-            //read the whole buff
-            read(client_socket,buff, sizeof(buff));
-            //trim the string
-            buff[strlen(buff)-1]=0; //clear newline
-            if(buff[strlen(buff)-1]==13){
-                //clear windows line ending
-                buff[strlen(buff)-1]=0;
-            }
-            currentClients[counter++] = client_socket;
-            
-
-            printf("\nRecieved from client '%s'\n",buff);
-            close(client_socket);
+            int connectingClient = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
+            currentClients[counter++] = connectingClient;
+            printf("Connected, to client %d\n", counter);
+            close(connectingClient);
         }
+        }
+
+        char clientString[256];
+        for(int i = 0;i< counter;i++){
+           
+             if (FD_ISSET(currentClients[i], &read_fds)) {
+                read(currentClients[i], clientString,255);
+                if(!strcmp(clientString, "start game")){
+                    notStarting = 0;
+                }
+                else{
+                    printf("%s\n", clientString);
+                }
+             }
+
         }
     }
 
