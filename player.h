@@ -1,6 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-struct player_data{
+
+// Declaration of the player_data struct
+struct player_data {
     int gold;
     int troops;
     int cities;
@@ -10,8 +12,11 @@ struct player_data{
     int selfIdentifier;
     int enemyIdentifier;
     int succeededInFinalBattle;
-    
-
 };
 
-#endif
+// Function Prototypes
+
+
+
+#endif // PLAYER_H
+
